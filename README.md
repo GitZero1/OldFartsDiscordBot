@@ -21,3 +21,5 @@ Your secret bot token is obtained from your discord developer portal when you cr
 Make sure to keep this token a secret, this is why I have written the code to store that information seperately so you wont even need to share it with me. 
 
 Once these 2 files are ready and in the same folder as the python bot just run the bot and it should handle the rest. 
+
+WARNING: you must invite the bot to your server prior to running it or it wont be able to set the server variable and will crash. I will probaby rewrite this in the future. 

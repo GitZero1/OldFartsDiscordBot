@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-import QeueSystem
+#import QeueSystem
 
 intents = discord.Intents.all()
 intents.members = True
@@ -24,6 +24,7 @@ bot.threesCategory = ""
 bot.foursCategory = ""
 bot.sixesCategory = ""
 bot.lfgCategory = ""
+bot.customCreators = []
 
 @bot.event
 async def on_ready():
@@ -37,70 +38,65 @@ async def on_ready():
             print("Found server")
             bot.oldFartServer = g
             oldFartServer = bot.oldFartServer
+            #set the new channel bitrate to whatever the max rate is for the server
             bot.newChanBitrate = int(oldFartServer.bitrate_limit)
+         
     
     #create categories
-    if not guild_has_category(oldFartServer, "2v2"):
+    if not guild_has_category(oldFartServer, "2-MAX VOICE CHANNELS"):
         print("making 2v2 category...")
-        await oldFartServer.create_category("2v2")
+        await oldFartServer.create_category("2-MAX VOICE CHANNELS")
         
-        bot.twosCategory = get_category(oldFartServer, "2v2")
+        bot.twosCategory = get_category(oldFartServer, "2-MAX VOICE CHANNELS")
          #create temp vc makers
-        await oldFartServer.create_voice_channel("Create new 2v2",category=bot.twosCategory)
+        await oldFartServer.create_voice_channel("➕ Create 2's VC",category=bot.twosCategory)
 
     #create 3v3 category
-    if not guild_has_category(oldFartServer, "3v3"):
+    if not guild_has_category(oldFartServer, "3-MAX VOICE CHANNELS"):
         print("making 3v3 category...")
-        await oldFartServer.create_category("3v3")
+        await oldFartServer.create_category("3-MAX VOICE CHANNELS")
         
-        bot.threesCategory = get_category(oldFartServer, "3v3")
+        bot.threesCategory = get_category(oldFartServer, "3-MAX VOICE CHANNELS")
          #create temp vc makers
-        await oldFartServer.create_voice_channel("Create new 3v3",category=bot.threesCategory)
+        await oldFartServer.create_voice_channel("➕ Create 3's VC",category=bot.threesCategory)
 
     #create 4v4 category
-    if not guild_has_category(oldFartServer, "4v4"):
+    if not guild_has_category(oldFartServer, "4-MAX VOICE CHANNELS"):
         print("making 4v4 category...")
-        await oldFartServer.create_category("4v4")
+        await oldFartServer.create_category("4-MAX VOICE CHANNELS")
         
-        bot.foursCategory = get_category(oldFartServer, "4v4")
+        bot.foursCategory = get_category(oldFartServer, "4-MAX VOICE CHANNELS")
          #create temp vc makers
-        await oldFartServer.create_voice_channel("Create new 4v4",category=bot.foursCategory)
+        await oldFartServer.create_voice_channel("➕ Create 4's VC",category=bot.foursCategory)
 
     #create 6mans category
-    if not guild_has_category(oldFartServer, "6mans"):
+    if not guild_has_category(oldFartServer, "6-MAX VOICE CHANNELS"):
         print("making 6mans category...")
-        await oldFartServer.create_category("6mans")
+        await oldFartServer.create_category("6-MAX VOICE CHANNELS")
         
-        bot.sixesCategory = get_category(oldFartServer, "6mans")
+        bot.sixesCategory = get_category(oldFartServer, "6-MAX VOICE CHANNELS")
          #create temp vc makers
-        await oldFartServer.create_voice_channel("Create new 6mans",category=bot.sixesCategory)
-
-    #create LFG category
-    if not guild_has_category(oldFartServer, "LFG"):
-        print("making LFG category...")
-        await oldFartServer.create_category("LFG")
-        bot.lfgCategory = get_category(oldFartServer, "LFG")
-
+        await oldFartServer.create_voice_channel("➕ Create 6's VC",category=bot.sixesCategory)
 
     #get categories
-    bot.twosCategory = get_category(oldFartServer, "2v2")
-    bot.threesCategory = get_category(oldFartServer, "3v3")
-    bot.foursCategory = get_category(oldFartServer, "4v4")
-    bot.sixesCategory = get_category(oldFartServer, "6mans")
-    bot.lfgCategory = get_category(oldFartServer, "LFG")
+    bot.twosCategory = get_category(oldFartServer, "2-MAX VOICE CHANNELS")
+    bot.threesCategory = get_category(oldFartServer, "3-MAX VOICE CHANNELS")
+    bot.foursCategory = get_category(oldFartServer, "4-MAX VOICE CHANNELS")
+    bot.sixesCategory = get_category(oldFartServer, "6-MAX VOICE CHANNELS")
     #get creator channels
     for c in oldFartServer.channels:
-        if c.name == "Create new 2v2":
+        if c.name == "➕ Create 2's VC":
             bot.twosMakerChannel = c
-        if c.name == "Create new 3v3":
+        if c.name == "➕ Create 3's VC":
             bot.threesMakerChannel = c
-        if c.name == "Create new 4v4":
+        if c.name == "➕ Create 4's VC":
             bot.foursMakerChannel = c
-        if c.name == "Create new 6mans":
+        if c.name == "➕ Create 6's VC":
             bot.sixesMakerChannel = c
 
 @bot.event
 async def on_voice_state_update(member, before, after):
+       
     #delete any empty VCs that we are making
     if before.channel != None and "Max #" in before.channel.name:
         if len(before.channel.members) == 0:
@@ -129,6 +125,7 @@ async def on_voice_state_update(member, before, after):
 @bot.event
 async def on_message(msg):
     await bot.process_commands(msg)
+    return
     if msg.author.id == bot.user.id:
         if "LFG" in msg.content:
             qMax_index = msg.content.find("Game Mode: ")
@@ -137,6 +134,7 @@ async def on_message(msg):
 
 @bot.event
 async def on_raw_reaction_add(payload):
+    return
     if QeueSystem.is_queue_message(payload.message_id,bot.activeQueues):
         #TODO handle queue
 
@@ -195,11 +193,13 @@ def get_category(guild, cat):
     return
 
 
+
 ######## Start of custom commands##################################################
 
 #LFG MAKER PRE ALPHA
 @bot.command()
 async def LFG(ctx, maxPlayers):
+    return
     if not maxPlayers.isdigit():
         await ctx.send("Please enter a valid number between 1 and 6")
         return
@@ -212,6 +212,7 @@ async def LFG(ctx, maxPlayers):
     reg = QeueSystem.get_player_region(player)
 
     await ctx.send("```LFG: \nRank: " + rank + "\nRegion: " + reg + "\nGame Mode: " + maxPlayers + "s\nReact to join Queue...```"  )
+
 
 ######## END OF COMMANDS ##########################################################
 

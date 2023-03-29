@@ -14,48 +14,17 @@ def is_queue_message(id, activeQueues):
       if q.id == id:
          return True
     return False
-   
 
 def get_player_rank(player):
-    rank = "no rank"
-    if search_for_rank(player, "Bronze"):
-        rank = "Bronze"
-    
-    if search_for_rank(player, "Silver"):
-        rank = "Silver"
-    
-    if search_for_rank(player, "Gold"):
-        rank = "Gold"
-    
-    if search_for_rank(player, "Platinum"):
-        rank = "Platinum"
-    
-    if search_for_rank(player, "Diamond"):
-        rank = "Diamond"
-    
-    return rank
+    roles = set(player.roles)
+    for role in [ "Diamond", "Platinum", "Gold", "Silver", "Bronze" ]:
+        if role in roles:
+            return role
+    return "no rank"
 
 def get_player_region(player):
-    reg = "No reg selected"
-
-    if search_for_Region(player, "USE"):
-        reg = "USE"
-    if search_for_Region(player, "USW"):
-        reg = "USW"
-    if search_for_Region(player, "OCX"):
-        reg = "OCX"
-    if search_for_Region(player, "EU"):
-        reg = "EU"
-    return reg
-
-def search_for_rank(player, rank):
-    for r in player.roles:
-        if r.name == rank:
-            return True
-    return False
-
-def search_for_Region(player, reg):
-    for r in player.roles:
-        if r.name == reg:
-            return True
-    return False
+    roles = set(player.roles)
+    for role in [ "USE", "USW", "OCX", "EU" ]:
+        if role in roles:
+            return role
+    return "no region selected"
