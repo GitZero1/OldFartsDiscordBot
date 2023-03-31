@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-#import QeueSystem
 
 intents = discord.Intents.all()
 intents.members = True
@@ -12,7 +11,6 @@ with open('serverID.txt') as f:
     serverID = f.readline()
 serverID = int(serverID)
 
-bot.activeQueues = []
 bot.newChanBitrate = 9600
 bot.oldFartServer = ""
 bot.twosMakerChannel = ""
@@ -96,27 +94,23 @@ async def on_ready():
     
 
 async def update_channels():
+    print("update channels")
     try:
         await rename_and_reorder("2 Max", bot.twosMakerChannel.position +1)
-    except:
-        print("failed to reorder 2s")
+    except Exception as e:
+        print(e)
     try:
         await rename_and_reorder("3 Max", bot.threesMakerChannel.position +1)
-    except:
-        print("failed to reorder 3s")
+    except Exception as e:
+        print(e)
     try:
         await rename_and_reorder("4 Max", bot.foursMakerChannel.position +1)
-    except:
-        print("failed to reorder 4s")
+    except Exception as e:
+        print(e)
     try:
         await rename_and_reorder("6 Max", bot.sixesMakerChannel.position +1)
-    except:
-        print("failed to reorder 6s")
- 
-@bot.event
-async def on_message(msg):
-    await update_channels()
-    await bot.process_commands(msg)
+    except Exception as e:
+        print(e)
     
 
 @bot.event
@@ -126,6 +120,7 @@ async def on_voice_state_update(member, before, after):
     if before.channel != None and "Max #" in before.channel.name:
         if len(before.channel.members) == 0:
             await before.channel.delete()
+            await update_channels()
     
     if after.channel == bot.twosMakerChannel:
         #create 2 max VC
